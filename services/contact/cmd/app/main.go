@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	pkg "helloWRLDs/clean_arch/pkg/store/postgres"
 	"helloWRLDs/clean_arch/services/contact/internal/delivery"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -13,6 +13,7 @@ import (
 
 type application struct {
 	delivery delivery.HTTPDeliveryInterface
+	logger   *slog.Logger
 }
 
 func init() {
@@ -32,14 +33,18 @@ func main() {
 		dbName     string = viper.GetString("database.name")
 		port       string = viper.GetString("server.address")
 	)
+	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
 	db, err := pkg.GetPostgresConnection(dbHost, dbPort, dbUser, dbPassword, dbName)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err.Error())
 		os.Exit(1)
+	} else {
+		logger.Info("connected to db", "host", dbHost, "port", dbPort, "db", dbName)
 	}
 
 	app := application{
-		delivery: delivery.NewDelivery(db),
+		delivery: delivery.NewDelivery(db, logger),
+		logger:   logger,
 	}
 
 	srv := &http.Server{
@@ -50,10 +55,10 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	fmt.Println("server started on port ", port)
+	app.logger.Info("server started", "port", port)
 	err = srv.ListenAndServe()
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err.Error())
 		os.Exit(1)
 	}
 }

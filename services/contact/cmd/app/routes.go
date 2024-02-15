@@ -10,7 +10,7 @@ import (
 func (app *application) routes() http.Handler {
 	router := httprouter.New()
 
-	def := alice.New(contentTypeJSON, secureHeaders)
+	def := alice.New(contentTypeJSON, secureHeaders, app.logRequest)
 
 	router.Handler(http.MethodPost, "/contacts/", def.ThenFunc(app.delivery.InsertContactController))
 	router.Handler(http.MethodGet, "/contacts", def.ThenFunc(app.delivery.GetAllContactsController))

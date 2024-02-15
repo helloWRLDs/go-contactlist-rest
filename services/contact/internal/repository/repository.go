@@ -44,7 +44,6 @@ func (r *Repository) GetContact(id int) (domain.Contact, error) {
 		&c.GroupId,
 	)
 	if err != nil {
-		fmt.Println(err)
 		return domain.Contact{}, err
 	}
 	return c, nil

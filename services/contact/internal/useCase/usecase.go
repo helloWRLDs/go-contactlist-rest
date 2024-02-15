@@ -59,7 +59,6 @@ func (u *UseCase) InsertContactUsecase(contact domain.Contact) (int, error) {
 	}
 	id, err := u.repo.InsertContact(contact)
 	if err != nil {
-		fmt.Println(err)
 		return 0, err
 	}
 	return id, nil
