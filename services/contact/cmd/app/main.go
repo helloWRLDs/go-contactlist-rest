@@ -1,14 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"helloWRLDs/clean_arch/pkg/config"
 	pkg "helloWRLDs/clean_arch/pkg/store/postgres"
 	"helloWRLDs/clean_arch/services/contact/internal/delivery"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/spf13/viper"
 )
 
 type application struct {
@@ -16,30 +16,21 @@ type application struct {
 	logger   *slog.Logger
 }
 
-func init() {
-	viper.SetConfigFile("config.json")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(err)
-	}
-}
-
 func main() {
-	var (
-		dbHost     string = viper.GetString("database.host")
-		dbPort     string = viper.GetString("database.port")
-		dbUser     string = viper.GetString("database.user")
-		dbPassword string = viper.GetString("database.password")
-		dbName     string = viper.GetString("database.name")
-		port       string = viper.GetString("server.address")
-	)
+	cfg := config.LoadConfig()
 	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
-	db, err := pkg.GetPostgresConnection(dbHost, dbPort, dbUser, dbPassword, dbName)
+	db, err := pkg.GetPostgresConnection(
+		cfg.Db.Host,
+		cfg.Db.Port,
+		cfg.Db.Username,
+		cfg.Db.Password,
+		cfg.Db.Name,
+	)
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	} else {
-		logger.Info("connected to db", "host", dbHost, "port", dbPort, "db", dbName)
+		logger.Info("connected to db", "url", fmt.Sprintf("'%s:%s/%s'", cfg.Db.Host, cfg.Db.Port, cfg.Db.Name))
 	}
 
 	app := application{
@@ -49,15 +40,14 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      app.routes(),
-		Addr:         port,
+		Addr:         cfg.Addr,
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
-	app.logger.Info("server started", "port", port)
-	err = srv.ListenAndServe()
-	if err != nil {
+	app.logger.Info("server started", "port", cfg.Addr)
+	if err = srv.ListenAndServe(); err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
