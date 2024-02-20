@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"helloWRLDs/clean_arch/pkg/config"
-	pkg "helloWRLDs/clean_arch/pkg/store/postgres"
-	"helloWRLDs/clean_arch/services/contact/internal/delivery"
+	"helloWRLDs/clean_arch/services/contact/configs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -12,12 +10,11 @@ import (
 )
 
 type application struct {
-	delivery delivery.HTTPDeliveryInterface
-	logger   *slog.Logger
+	logger *slog.Logger
 }
 
 func main() {
-	cfg := config.LoadConfig()
+	cfg := configs.LoadConfig()
 	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
 	db, err := pkg.GetPostgresConnection(
 		cfg.Db.Host,
@@ -34,8 +31,7 @@ func main() {
 	}
 
 	app := application{
-		delivery: delivery.NewDelivery(db, logger),
-		logger:   logger,
+		logger: logger,
 	}
 
 	srv := &http.Server{
