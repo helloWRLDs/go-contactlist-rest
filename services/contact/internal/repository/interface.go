@@ -2,21 +2,20 @@ package repository
 
 import "helloWRLDs/clean_arch/services/contact/internal/domain"
 
-type RepositoryInterface interface {
-	IsContactExist(id int) bool
-	GetContact(id int) (domain.Contact, error)
-	GetAllContacts() ([]domain.Contact, error)
-	InsertContact(c domain.Contact) (int, error)
-	DeleteContact(id int) error
-	GetGroup(id int) (domain.Group, error)
-	GetAllGroups() ([]domain.Group, error)
-	InsertGroup(c domain.Group) (int, error)
-	DeleteGroup(id int) error
-	GetContactsByGroup(group_id int) ([]domain.Contact, error)
-}
-
 type (
-	Contact interface {
-		Insert()
+	ContactInterface interface {
+		Insert(contact *domain.Contact) (int, error)
+		Get(id int) (domain.Contact, error)
+		GetAll() ([]domain.Contact, error)
+		Delete(id int) error
+		Exist(id int) bool
+	}
+
+	GroupInterface interface {
+		Insert(group *domain.Group) (int, error)
+		Get(id int) (domain.Group, error)
+		GetAll() ([]domain.Group, error)
+		Delete(id int) error
+		Exist(id int) bool
 	}
 )

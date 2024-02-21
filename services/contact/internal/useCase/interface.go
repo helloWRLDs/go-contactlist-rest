@@ -12,7 +12,7 @@ type (
 		Delete(ctx context.Context, id int) error
 	}
 
-	ContactReader interface {
+	ContactRead interface {
 		List(ctx context.Context) ([]domain.Contact, error)
 		ReadByID(ctx context.Context, id int) (domain.Contact, error)
 		Exists(ctx context.Context, id int) bool

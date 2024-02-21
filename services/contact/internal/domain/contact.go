@@ -9,7 +9,6 @@ type Contact struct {
 }
 
 func NewContact(id int, firstName, lastName, middleName, phone string) (*Contact, error) {
-	//Validation in future
 	return &Contact{
 		Id:         id,
 		FirstName:  firstName,

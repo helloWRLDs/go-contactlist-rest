@@ -6,7 +6,6 @@ type Group struct {
 }
 
 func NewGroup(id int, name string) (*Group, error) {
-	//Validation here
 	return &Group{
 		Id:   id,
 		Name: name,
