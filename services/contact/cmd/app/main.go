@@ -4,6 +4,7 @@ import (
 	"fmt"
 	pkg "helloWRLDs/clean_arch/pkg/store/postgres"
 	"helloWRLDs/clean_arch/services/contact/configs"
+	usecase "helloWRLDs/clean_arch/services/contact/internal/useCase"
 	"log/slog"
 	"net/http"
 	"os"

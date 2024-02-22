@@ -17,3 +17,10 @@ func NewContact(id int, firstName, lastName, middleName, phone string) (*Contact
 		Phone:      phone,
 	}, nil
 }
+
+func (c *Contact) Validate() error {
+	if len(c.FirstName) == 0 || len(c.LastName) == 0 || len(c.MiddleName) == 0 {
+		return ErrEmptyNameFields
+	}
+	return nil
+}

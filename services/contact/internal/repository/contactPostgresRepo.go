@@ -6,17 +6,17 @@ import (
 	"helloWRLDs/clean_arch/services/contact/internal/domain"
 )
 
-type ContactRepository struct {
+type ContactRepositoryImpl struct {
 	DB *sql.DB
 }
 
-func NewContactRepository(db *sql.DB) *ContactRepository {
-	return &ContactRepository{
+func NewContactRepository(db *sql.DB) *ContactRepositoryImpl {
+	return &ContactRepositoryImpl{
 		DB: db,
 	}
 }
 
-func (r *ContactRepository) Insert(contact *domain.Contact) (int, error) {
+func (r *ContactRepositoryImpl) Insert(contact *domain.Contact) (int, error) {
 	stmt := "INSERT INTO contacts (first_name, last_name, middle_name, phone) VALUES ($1, $2, $3, $4) RETURNING id"
 	var id int
 	err := r.DB.QueryRow(stmt, contact.FirstName, contact.LastName, contact.MiddleName, contact.Phone).Scan(&id)
@@ -26,7 +26,7 @@ func (r *ContactRepository) Insert(contact *domain.Contact) (int, error) {
 	return id, nil
 }
 
-func (r *ContactRepository) Get(id int) (domain.Contact, error) {
+func (r *ContactRepositoryImpl) Get(id int) (domain.Contact, error) {
 	var c domain.Contact
 	stmt := "SELECT * FROM contacts WHERE id=$1"
 	err := r.DB.QueryRow(stmt, id).Scan(
@@ -42,7 +42,7 @@ func (r *ContactRepository) Get(id int) (domain.Contact, error) {
 	return c, nil
 }
 
-func (r *ContactRepository) GetAll() ([]domain.Contact, error) {
+func (r *ContactRepositoryImpl) GetAll() ([]domain.Contact, error) {
 	stmt := "SELECT * FROM contacts"
 	rows, err := r.DB.Query(stmt)
 	if err != nil {
@@ -63,7 +63,7 @@ func (r *ContactRepository) GetAll() ([]domain.Contact, error) {
 	return contacts, nil
 }
 
-func (r *ContactRepository) Delete(id int) error {
+func (r *ContactRepositoryImpl) Delete(id int) error {
 	stmt := "DELETE FROM contacts WHERE id=$1"
 	_, err := r.DB.Exec(stmt, id)
 	if err != nil {
@@ -72,7 +72,7 @@ func (r *ContactRepository) Delete(id int) error {
 	return nil
 }
 
-func (r *ContactRepository) Exist(id int) bool {
+func (r *ContactRepositoryImpl) Exist(id int) bool {
 	stmt := "SELECT EXISTS (SELECT * FROM contacts WHERE id=$1)"
 	var exists bool
 	err := r.DB.QueryRow(stmt, id).Scan(&exists)

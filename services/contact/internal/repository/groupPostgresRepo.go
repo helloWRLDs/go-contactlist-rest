@@ -5,17 +5,17 @@ import (
 	"helloWRLDs/clean_arch/services/contact/internal/domain"
 )
 
-type GroupRepository struct {
+type GroupRepositoryImpl struct {
 	DB *sql.DB
 }
 
-func NewGroupRepository(db *sql.DB) *GroupRepository {
-	return &GroupRepository{
+func NewGroupRepository(db *sql.DB) *GroupRepositoryImpl {
+	return &GroupRepositoryImpl{
 		DB: db,
 	}
 }
 
-func (r *GroupRepository) Insert(group *domain.Group) (int, error) {
+func (r *GroupRepositoryImpl) Insert(group *domain.Group) (int, error) {
 	var id int
 	stmt := "INSERT INTO groups(names) VALUES ($1) RETURNING id"
 	err := r.DB.QueryRow(stmt, group.Name).Scan(&id)
@@ -25,7 +25,7 @@ func (r *GroupRepository) Insert(group *domain.Group) (int, error) {
 	return id, nil
 }
 
-func (r *GroupRepository) Get(id int) (domain.Group, error) {
+func (r *GroupRepositoryImpl) Get(id int) (domain.Group, error) {
 	var group domain.Group
 	stmt := "SELECT * FROM groups WHERE id=$1"
 	err := r.DB.QueryRow(stmt, id).Scan(&group.Id, &group.Name)
@@ -35,7 +35,7 @@ func (r *GroupRepository) Get(id int) (domain.Group, error) {
 	return group, nil
 }
 
-func (r *GroupRepository) GetAll() ([]domain.Group, error) {
+func (r *GroupRepositoryImpl) GetAll() ([]domain.Group, error) {
 	var groups []domain.Group
 	stmt := "SELECT * FROM groups"
 	rows, err := r.DB.Query(stmt)
@@ -54,7 +54,7 @@ func (r *GroupRepository) GetAll() ([]domain.Group, error) {
 	return groups, nil
 }
 
-func (r *GroupRepository) Delete(id int) error {
+func (r *GroupRepositoryImpl) Delete(id int) error {
 	stmt := "DELETE FROM groups WHERE id=$1"
 	_, err := r.DB.Exec(stmt, id)
 	if err != nil {
@@ -63,7 +63,7 @@ func (r *GroupRepository) Delete(id int) error {
 	return nil
 }
 
-func (r *GroupRepository) Exist(id int) bool {
+func (r *GroupRepositoryImpl) Exist(id int) bool {
 	stmt := "SELECT EXISTS (SELECT * FROM groups WHERE id=$1)"
 	var exists bool
 	err := r.DB.QueryRow(stmt, id).Scan(&exists)
