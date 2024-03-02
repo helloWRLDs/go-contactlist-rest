@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"helloWRLDs/clean_arch/pkg/drivers/postgres"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -8,15 +9,7 @@ import (
 
 type AppConfig struct {
 	Addr string
-	Db   *DatabaseConfig
-}
-
-type DatabaseConfig struct {
-	Name     string
-	Host     string
-	Port     string
-	Username string
-	Password string
+	Db   *postgres.PostgresCFG
 }
 
 func LoadConfig() *AppConfig {
@@ -25,10 +18,10 @@ func LoadConfig() *AppConfig {
 	}
 	return &AppConfig{
 		Addr: os.Getenv("ADDRESS"),
-		Db: &DatabaseConfig{
+		Db: &postgres.PostgresCFG{
 			Host:     os.Getenv("DBHOST"),
 			Port:     os.Getenv("DBPORT"),
-			Username: os.Getenv("DBUSER"),
+			User:     os.Getenv("DBUSER"),
 			Password: os.Getenv("DBPASS"),
 			Name:     os.Getenv("DBNAME"),
 		},

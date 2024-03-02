@@ -1,38 +1,20 @@
 package usecase
 
-import (
-	"context"
-	"helloWRLDs/clean_arch/services/contact/internal/domain"
-)
+import "github.com/gin-gonic/gin"
 
 type (
-	Contact interface {
-		Create(ctx context.Context, contact *domain.Contact) (int, error)
-		Update(ctx context.Context, id int, contactToUpdate domain.Contact) (int, error)
-		Delete(ctx context.Context, id int) error
+	ContactUseCase interface {
+		GetAllContacts(ctx *gin.Context)
+		InsertContact(ctx *gin.Context)
+		GetContact(ctx *gin.Context)
+		DeleteContact(ctx *gin.Context)
+		UpdateContact(ctx *gin.Context)
 	}
 
-	ContactRead interface {
-		List(ctx context.Context) ([]domain.Contact, error)
-		ReadByID(ctx context.Context, id int) (domain.Contact, error)
-		Exists(ctx context.Context, id int) bool
-	}
-
-	Group interface {
-		Create(ctx context.Context, group *domain.Group) (int, error)
-		Update(ctx context.Context, id int, groupToUpdate *domain.Group) (int, error)
-		Delete(ctx context.Context, id int) error
-	}
-
-	GroupRead interface {
-		List(ctx context.Context) ([]domain.Group, error)
-		ReadByID(ctx context.Context, id int) (domain.Group, error)
-		Exists(ctx context.Context, id int) bool
-	}
-
-	ContactInGroup interface {
-		CreateContactInGroup(ctx context.Context, groupId int, contact *domain.Contact) (int, error)
-		AddContactToGroup(ctx context.Context, groupId int, contactId int) error
-		DeleteContactFromGroup(ctx context.Context, groupId int, contactId int) error
+	GroupUseCase interface {
+		GetAllGroups(ctx *gin.Context)
+		InsertGroup(ctx *gin.Context)
+		GetGroup(ctx *gin.Context)
+		DeleteGroup(ctx *gin.Context)
 	}
 )
